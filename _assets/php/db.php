@@ -6,8 +6,8 @@ class DB {
   
   // privates
   private $server   = "localhost";
-  private $dbname   = "canvas-letters-visualiser";
-  private $dbtable  = "canvas-letters-visualiser";
+  private $dbname   = "wrrds";
+  private $dbtable  = "wrrds";
   private $user     = "root";
   private $pass     = "root";
   private $conn;

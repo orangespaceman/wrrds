@@ -1,4 +1,4 @@
-CREATE TABLE `canvas-letters-visualiser` (
+CREATE TABLE `wrrds` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(20) NOT NULL,  
   `message` varchar(255) NOT NULL,
@@ -12,8 +12,7 @@ CREATE TABLE `canvas-letters-visualiser` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
 
 --
--- Dumping data for table `canvas-letters`
+-- data for table `wrrds`
 --
+INSERT INTO `wrrds` VALUES(1, 'Pete G', 'Is this thing on?', 0, 0, 0, '192.168.11.38', '2011-12-08 18:49:13', '2011-12-08 18:49:25');
 
-
-INSERT INTO `canvas-letters` VALUES(1, '8hy5e', 'ff9900', '000000', 15, 'Quidquid latine dictum sit; altum sonatur.', 10, 1, 'default', 1, 1, 5, 0, '192.168.0.7', '2010-10-13 11:40:52');
