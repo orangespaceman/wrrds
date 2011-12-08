@@ -1,0 +1,34 @@
+/* minimal form CSS */
+html, body { margin:0; padding:0; }
+body { background:#000; color:#fff; font-family:monospace; padding:10px; }
+h1 { margin:0 0 20px 0; }
+legend { display:none; }
+fieldset { border:0; margin:0; padding:0; }
+label { float:left; width:200px; margin-bottom:10px; font-size:14px; }
+label span { margin-left:10px; font-size:12px; }
+input.text, textarea { width:280px; margin-bottom:20px; padding:10px; background:#000; color:#fff; font-family:monospace; font-size:14px;}
+input.button { background:#fff; color:#000; font-size:14px; padding:5px 10px; border:0; border-radius:10px; cursor:pointer; float:left; margin-right:10px; }
+input.button:hover { background:#ddd; }
+input.button.disabled { background:#999; cursor:default; }
+
+p#message-saved {
+  margin:7px 0 0 0;
+  float:left;
+  font-weight:italic;
+  -webkit-animation: fade-out 3s 1;
+  animation: fade-out 3s 1;
+}
+
+@-webkit-keyframes fade-out {
+    20%, 80% { opacity: 1; }
+    0%, 100% { opacity: 0; }
+}
+@keyframes fade-out {
+    20%, 80% { opacity: 1; }
+    0%, 100% { opacity: 0; }
+}
+
+@media only screen and (min-width: 321px) {
+  label { width:140px; }
+  label span { display:block; margin-left:0; }
+}
