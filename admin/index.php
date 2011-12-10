@@ -9,6 +9,9 @@
     if (isset($_POST['block'])) {
       $result = $db->blockUnblock($_POST);
     }
+    if (isset($_POST['archive'])) {
+      $result = $db->archive();
+    }
   }
   
   $messages = $db->getAll();
@@ -56,6 +59,13 @@
       }
 ?>
   </div>
+  
+  <form method="post" action="" id="archive-container">
+    <fieldset>
+      <legend>Archive</legend>      
+      <input type="submit" class="button" id="archive" name="archive" value="Archive and clear messages" />
+    </fieldset>
+  </form>
   
   <script src="../_assets/js/ajax.js"></script>
   <script src="../_assets/js/json.js"></script>

@@ -1,6 +1,6 @@
 /* minimal admin CSS */
 html, body { margin:0; padding:0; }
-body { background:#000; color:#fff; font-family:monospace; padding:10px; }
+body { background:#000; color:#fff; font-family:monospace; }
 h1 { margin:0 0 5px 0; font-size:14px; }
 h2 { margin:0 0 5px 0; }
 time { display:block; margin:0 0 5px 0; font-size:11px; font-style:italic; }
@@ -16,7 +16,10 @@ header p { margin:0; }
 header a { text-decoration:none; color:#fff; }
 #message-added { position:absolute; bottom:10px; right:10px; }
 
-#messages { padding-top:50px; }
+#messages { padding:50px 10px 50px 10px; }
+
+#archive-container { padding:10px; background:#222; border-top:1px solid #f90; margin:0; }
+#archive { position:static; }
 
 .message-block { position:relative; margin:10px 0; padding:20px 10px 10px 10px; border:0; border-radius:10px; background:#222; max-width:440px; overflow:hidden;
   -webkit-transition: background 0.5s ease-out;  

@@ -56,12 +56,15 @@ var admin = function() {
       e.preventDefault();
       return false;
     };
+    
+    // init confirm message on archive link
+    archiveConfirm();
   },
   
   
   // set listener on form submits
   setFormListeners = function() {
-    forms = document.getElementsByTagName("form");
+    forms = messageContainer.getElementsByTagName("form");
     for (counter = 0; counter < forms.length; counter++) {
       formSubmit(forms[counter]);
     }
@@ -254,8 +257,23 @@ var admin = function() {
     }
     setTimeout(function() { headerLoader.classList.add('hidden'); }, 500);
     setTimeout(getAllStatuses, timeCheck);
-  };
+  },
   
+  // init confirm message on archive link
+  archiveConfirm = function() {
+    var doArchive = false, 
+        archiveConfirm = document.getElementById("archive-container");
+        
+    archiveConfirm.onsubmit = function(e) {
+      e = e || window.event;
+      e.preventDefault();
+      doArchive = confirm("Are you sure you want to archive the current messages?");
+      if (doArchive) {
+        archiveConfirm.submit();
+      }
+      return false;      
+    };
+  };
   
   // expose any of the methods above
   return {
