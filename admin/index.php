@@ -24,14 +24,14 @@
 <head>
   <meta charset='utf-8'>
   <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1">
-  <title>Admin</title> 
+  <title>Wrrds Admin</title> 
   <link rel="stylesheet" href="../_assets/css/admin.css">
 </head> 
 <body> 
 
   <header>
     <a href="#messages">
-      <h1>Admin</h1>
+      <h1>Wrrds Admin</h1>
       <p><span id="approved"><?php echo $approvedCount; ?></span> approved messages (from <span id="total"><?php echo $messageCount; ?></span>)</p>
     </a>
   </header>

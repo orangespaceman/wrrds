@@ -5,18 +5,27 @@
 class DB {
   
   // privates
-  private $server   = "localhost";
-  private $dbname   = "wrrds";
-  private $dbtable  = "wrrds";
-  private $user     = "root";
-  private $pass     = "root";
-  private $conn;
+  protected $conf;
+  protected $server;
+  protected $dbname;
+  protected $dbtable;
+  protected $username;
+  protected $password;
+  protected $conn;
   
   /**
    * The constructor
    */
   function __construct() {
-    $this->conn = mysql_connect($this->server,$this->user,$this->pass);
+
+    // parse configuration file
+    $path = dirname(__FILE__);
+  	$this->conf = parse_ini_file($path."/../../config.ini.php", true);
+  	foreach ($this->conf['db'] as $key => $value) {
+  	 $this->$key = $value;
+  	}
+    
+    $this->conn = mysql_connect($this->server, $this->username, $this->password);
     mysql_select_db($this->dbname, $this->conn);
   }
 
@@ -117,10 +126,12 @@ class DB {
   function getNext() {
     $sql = "SELECT *, date_format(dateadded, '%W %D %M %Y, %k:%i') as date_added, date_format(dateadded, '%k:%i') as time_added from `".$this->dbtable."` WHERE isbanned = 0 AND plays = 0 order by dateadded asc limit 0,1";
     $result = $this->selectQuery($sql);
-    if (count($result) < 1) {
+    if (count($result) > 0) {
+      $return = $result[0];
+    } else if ($this->conf['options']['repeatMessages']) {
       $return = $this->getOneRand();
     } else {
-      $return = $result[0];
+      return false;
     }
     $this->increaseViewCount($return->id);
     return $return;
@@ -210,16 +221,18 @@ class DB {
    */
   function save($post) {
     
-    require_once('Moderation.php');
-    
     // sanitise
     foreach($post as $key => $postitem) {
       $post[$key] = $this->sanitise($postitem);
     }
     
     // profanity check
-    $moderation = Moderation::moderate($post['name']);
-    if (!$moderation) { $moderation = Moderation::moderate($post['message']); }
+    $moderation = 0;
+    if ($this->conf['options']['moderate']) {
+      require_once('Moderation.php');
+      $moderation = Moderation::moderate($post['name']);
+      if (!$moderation) { $moderation = Moderation::moderate($post['message']); }
+    }
     
     //insert 
     $sql = "INSERT into `".$this->dbtable."` 

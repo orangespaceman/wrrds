@@ -193,7 +193,7 @@ var canvasLetters = function() {
     speed : 5,
     animate : true,
     ajaxUrl : null,
-    debugMode : true   
+    debugMode : false   
   },
   
   /*
@@ -591,13 +591,21 @@ var canvasLetters = function() {
       
     // reversing
     } else {
-      blocks.reverse();
-      for (var count = blocks.length - 1; count >= 0; count--){ blocks[count].opacity = 0;}
-      currentBlock = 0;
-      reversing = !reversing;
-      setTimeout(function(){ 
-        drawInterval = setInterval(draw, options.speed);
-      }, 5000);
+      
+      // only start reversing if the next message is ready
+      if (!requestingNextString) {
+        blocks.reverse();
+        for (var count = blocks.length - 1; count >= 0; count--){ blocks[count].opacity = 0;}
+        currentBlock = 0;
+        reversing = !reversing;
+        setTimeout(function(){ 
+          drawInterval = setInterval(draw, options.speed);
+        }, 5000);
+      
+      // string isn't ready yet, check again in a second
+      } else {
+        setTimeout(resetBlocks, 1000);
+      }
     }
   },
   
@@ -623,12 +631,22 @@ var canvasLetters = function() {
    */
   retrieveNextMessageCallback = function(data) {
     var messageData = json_parse(data);
-    nextString = messageData.message + "§§- "+messageData.name+", "+messageData.time_added;  
-    nextString = nextString.replace("\\'", "'");
-    nextString = nextString.replace("\\\'", "'");
-    nextString = nextString.replace('\\"', '"');
-    nextString = nextString.replace('\\\"', '"');
-    requestingNextString = false;
+
+    // if a message is set
+    if (!!messageData.name) {
+      nextString = messageData.message + "§§- "+messageData.name+", "+messageData.time_added;  
+      nextString = nextString.replace("\\'", "'");
+      nextString = nextString.replace("\\\'", "'");
+      nextString = nextString.replace('\\"', '"');
+      nextString = nextString.replace('\\\"', '"');
+      requestingNextString = false;
+
+    // no new messages, wait
+    } else {
+      setTimeout(function(){ 
+        retrieveNextMessage();
+      }, 5000);
+    }
   },
   
   

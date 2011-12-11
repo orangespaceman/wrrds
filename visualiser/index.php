@@ -3,7 +3,7 @@
 <html>
 <head>
   <meta charset='utf-8'>
-  <title>Visualiser</title>
+  <title>Wrrds Visualiser</title>
   <style>
     * { margin:0;padding:0; }
     body { background:#000; color:#333; }
