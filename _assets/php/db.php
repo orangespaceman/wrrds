@@ -256,6 +256,9 @@ class DB {
 
     $id = $this->addQuery($sql);
     
+    $post['name'] = stripslashes($post['name']);
+    $post['message'] = stripslashes($post['message']);
+    
     $return = array( 
       'success' => true,
       'details' => $post

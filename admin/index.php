@@ -44,8 +44,8 @@
       <fieldset>
         <legend>Messages!</legend>      
         <div class="message-block'.(($message->isbanned) ? " banned" : "").'">
-          <h2>'.$message->message.'</h2>
-          <p>'.$message->name.' <span class="ip meta">('.$message->ip.')</span></p>
+          <h2>'.stripslashes($message->message).'</h2>
+          <p>'.stripslashes($message->name).' <span class="ip meta">('.$message->ip.')</span></p>
           <time>'.$message->date_added.'</time>
           <!--<p class="views meta">Viewed '.$message->plays.' times</p>-->
           <p class="counter meta">'.$message->id.(($message->isflagged) ? ' <span class="flagged">(Flagged)</span>' : '').'</p>
