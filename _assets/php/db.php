@@ -275,18 +275,19 @@ class DB {
    function archive() {
 
      $tables = array();
-     $result = mysqli_query('SHOW TABLES');
+     $return = '';
+     $result = mysqli_query($this->conn, 'SHOW TABLES');
      while($row = mysqli_fetch_row($result)) {
        $tables[] = $row[0];
      }
 
      //cycle through
      foreach($tables as $table) {
-       $result = mysqli_query('SELECT * FROM '.$table);
+       $result = mysqli_query($this->conn, 'SELECT * FROM '.$table);
        $num_fields = mysqli_num_fields($result);
 
        $return.= 'DROP TABLE '.$table.';';
-       $row2 = mysqli_fetch_row(mysqli_query('SHOW CREATE TABLE '.$table));
+       $row2 = mysqli_fetch_row(mysqli_query($this->conn, 'SHOW CREATE TABLE '.$table));
        $return.= "\n\n".$row2[1].";\n\n";
 
        for ($i = 0; $i < $num_fields; $i++) {
@@ -315,9 +316,9 @@ class DB {
        $queries = preg_split("/;+(?=([^'|^\\\']*['|\\\'][^'|^\\\']*['|\\\'])*[^'|^\\\']*[^'|^\\\']$)/", $sql);
        foreach ($queries as $query){
          if (strlen(trim($query)) > 0) {
-           $result = mysqli_query($query);
+           $result = mysqli_query($this->conn, $query);
             if (!$result) {
-                die('Invalid query: ' . mysqli_error());
+                die('Invalid query: ' . mysqli_error($this->conn));
             }
         }
        }
