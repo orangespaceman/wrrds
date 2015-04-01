@@ -13,6 +13,8 @@ There are three parts to the app:
 
 Set up is quick, just add the files to a web server, and edit the `config.ini.php` and add your MySQL database access details.
 
+There's an sql file at `/_assets/sql/wrrds.sql` that needs running to set up the database.
+
 There are also a couple of configurable options:
 
   * *moderate*: Moderate all new messages and only display those that pass (the rest can be toggled via the admin section)
