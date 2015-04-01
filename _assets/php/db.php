@@ -1,9 +1,9 @@
-<?php 
+<?php
 /*
  * database connection and calls
  */
 class DB {
-  
+
   // privates
   protected $conf;
   protected $server;
@@ -12,7 +12,7 @@ class DB {
   protected $username;
   protected $password;
   protected $conn;
-  
+
   /**
    * The constructor
    */
@@ -24,91 +24,91 @@ class DB {
   	foreach ($this->conf['db'] as $key => $value) {
   	 $this->$key = $value;
   	}
-    
-    $this->conn = mysql_connect($this->server, $this->username, $this->password);
-    mysql_select_db($this->dbname, $this->conn);
+
+    $this->conn = mysqli_connect($this->server, $this->username, $this->password);
+    mysqli_select_db($this->conn, $this->dbname);
   }
 
-  
+
   /**
-   * Generic MySQL select query 
+   * Generic MySQL select query
    */
   function selectQuery($sql) {
-    
+
     //run the initial query
-    $result = @mysql_query($sql);
-    
+    $result = mysqli_query($this->conn, $sql);
+
     //condition : if it is a single value, return it
-    if (@mysql_num_fields($result) === 1 && @mysql_num_rows($result) === 1) {
-      list($return) = @mysql_fetch_row($result);
-    
+    if (mysqli_num_fields($result) === 1 && mysqli_num_rows($result) === 1) {
+      list($return) = mysqli_fetch_row($result);
+
     // it is more than a single row, start an array to contain each object...
     } else {
-      
+
       //start the var to return
       $return = array();
-    
+
       //for each row in the result, start a new object
-      while ($row = @mysql_fetch_object($result)) {
+      while ($row = mysqli_fetch_object($result)) {
         $return[] = $row;
       }
     }
-    
+
     return $return;
   }
 
 
   /**
-   * Generic MySQL update query 
+   * Generic MySQL update query
    */
   function updateQuery($sql) {
-    
+
     //run the initial query
-    $result = mysql_query($sql);
-    
+    $result = mysqli_query($this->conn, $sql);
+
     if ($result) {
       $return = true;
     } else {
       $return = false;
     }
-    
+
     return $return;
   }
-  
-  
+
+
   /**
-   * Generic MySQL add query 
+   * Generic MySQL add query
    */
   function addQuery($sql) {
-    
+
     //run the initial query
-    $result = mysql_query($sql);
-    
+    $result = mysqli_query($this->conn, $sql);
+
     if ($result) {
-      $return = mysql_insert_id();
+      $return = mysqli_insert_id();
     } else {
       $return = false;
     }
-    
+
     return $return;
   }
-  
+
   /*
    *
    */
   function sanitise($val) {
-    return strip_tags(mysql_real_escape_string($val));
+    return strip_tags(mysqli_real_escape_string($val));
   }
-  
-  
-  
-  
+
+
+
+
   /*
    *
    * Site-specific calls
    *
    */
-  
+
   /*
    * get one at random
    */
@@ -117,7 +117,7 @@ class DB {
     $result = $this->selectQuery($sql);
     return $result[0];
   }
-  
+
   /*
    * get next
    * get oldest message that hasn't been displayed yet
@@ -136,7 +136,7 @@ class DB {
     $this->increaseViewCount($return->id);
     return $return;
   }
-  
+
   /*
    * get all (admin)
    */
@@ -144,7 +144,7 @@ class DB {
     $sql = "SELECT *, date_format(dateadded, '%W %D %M %Y, %k:%i') as date_added from `".$this->dbtable."` order by dateadded desc";
     return $this->selectQuery($sql);
   }
-  
+
   /*
    * get all statuses (admin)
    */
@@ -152,7 +152,7 @@ class DB {
     $sql = "SELECT id, isbanned from `".$this->dbtable."` order by dateadded desc";
     return $this->selectQuery($sql);
   }
-  
+
   /*
    * get all since an ID (admin)
    */
@@ -160,8 +160,8 @@ class DB {
     $sql = "SELECT *, date_format(dateadded, '%W %D %M %Y, %k:%i') as date_added from `".$this->dbtable."` WHERE id > ".$id." order by dateadded asc";
     return $this->selectQuery($sql);
   }
-  
-  
+
+
   /*
    * increase view count
    */
@@ -169,7 +169,7 @@ class DB {
     $sql = "UPDATE `".$this->dbtable."` set plays = plays + 1 WHERE id = '".$id."'";
     return $this->updateQuery($sql);
   }
-  
+
   /*
    * get count
    */
@@ -177,7 +177,7 @@ class DB {
     $sql = "SELECT count('id') as dbcount FROM `".$this->dbtable."`";
     return $this->selectQuery($sql);
   }
-  
+
   /*
    * get count
    */
@@ -185,25 +185,25 @@ class DB {
     $sql = "SELECT count('id') as dbcount FROM `".$this->dbtable."` WHERE isbanned = 0";
     return $this->selectQuery($sql);
   }
-  
-  
+
+
   /*
    * block
    */
   function blockUnblock($post) {
-    
+
     // sanitise
     if (isset($post['block']) && $post['block'] == 0) {
       $isbanned = 0;
     } else {
       $isbanned = 1;
     }
-    
+
     $id = $this->sanitise($post['id']);
-    
-    //insert 
+
+    //insert
     $sql = "
-      UPDATE `".$this->dbtable."` 
+      UPDATE `".$this->dbtable."`
       SET isbanned = '".$isbanned."'
       WHERE `id` = '".$id."'
     ";
@@ -214,18 +214,18 @@ class DB {
       "id" => $id
     );
   }
-  
-  
+
+
   /*
    * save
    */
   function save($post) {
-    
+
     // sanitise
     foreach($post as $key => $postitem) {
       $post[$key] = $this->sanitise($postitem);
     }
-    
+
     // profanity check
     $moderation = 0;
     if ($this->conf['options']['moderate']) {
@@ -233,9 +233,9 @@ class DB {
       $moderation = Moderation::moderate($post['name']);
       if (!$moderation) { $moderation = Moderation::moderate($post['message']); }
     }
-    
-    //insert 
-    $sql = "INSERT into `".$this->dbtable."` 
+
+    //insert
+    $sql = "INSERT into `".$this->dbtable."`
       (
         name,
         message,
@@ -245,29 +245,29 @@ class DB {
         ip,
         dateadded
       ) values (
-        '".$post['name']."', 
-        '".$post['message']."', 
+        '".$post['name']."',
+        '".$post['message']."',
         '".$moderation."',
         '".$moderation."',
         '0',
-        '".$_SERVER['REMOTE_ADDR']."',  
+        '".$_SERVER['REMOTE_ADDR']."',
          NOW()
       )";
 
     $id = $this->addQuery($sql);
-    
+
     $post['name'] = stripslashes($post['name']);
     $post['message'] = stripslashes($post['message']);
-    
-    $return = array( 
+
+    $return = array(
       'success' => true,
       'details' => $post
     );
-    
+
     return $return;
-  } 
-  
-  
+  }
+
+
   /*
    * Archive
    * munged from http://davidwalsh.name/backup-mysql-database-php
@@ -275,22 +275,22 @@ class DB {
    function archive() {
 
      $tables = array();
-     $result = mysql_query('SHOW TABLES');
-     while($row = mysql_fetch_row($result)) {
+     $result = mysqli_query('SHOW TABLES');
+     while($row = mysqli_fetch_row($result)) {
        $tables[] = $row[0];
      }
 
      //cycle through
      foreach($tables as $table) {
-       $result = mysql_query('SELECT * FROM '.$table);
-       $num_fields = mysql_num_fields($result);
+       $result = mysqli_query('SELECT * FROM '.$table);
+       $num_fields = mysqli_num_fields($result);
 
        $return.= 'DROP TABLE '.$table.';';
-       $row2 = mysql_fetch_row(mysql_query('SHOW CREATE TABLE '.$table));
+       $row2 = mysqli_fetch_row(mysqli_query('SHOW CREATE TABLE '.$table));
        $return.= "\n\n".$row2[1].";\n\n";
 
        for ($i = 0; $i < $num_fields; $i++) {
-         while($row = mysql_fetch_row($result)) {
+         while($row = mysqli_fetch_row($result)) {
            $return.= 'INSERT INTO '.$table.' VALUES(';
            for($j=0; $j<$num_fields; $j++) {
              $row[$j] = addslashes($row[$j]);
@@ -309,17 +309,17 @@ class DB {
        $handle = fopen($path.'/../sql/archive/db-'.date("d-m-y-H-i-s").'.sql','w+');
        fwrite($handle,$return);
        fclose($handle);
-       
+
        // drop current contents and reset to default
        $sql = file_get_contents($path."/../sql/wrrds.sql");
-       $queries = preg_split("/;+(?=([^'|^\\\']*['|\\\'][^'|^\\\']*['|\\\'])*[^'|^\\\']*[^'|^\\\']$)/", $sql); 
-       foreach ($queries as $query){ 
+       $queries = preg_split("/;+(?=([^'|^\\\']*['|\\\'][^'|^\\\']*['|\\\'])*[^'|^\\\']*[^'|^\\\']$)/", $sql);
+       foreach ($queries as $query){
          if (strlen(trim($query)) > 0) {
-           $result = mysql_query($query);
+           $result = mysqli_query($query);
             if (!$result) {
-                die('Invalid query: ' . mysql_error());
+                die('Invalid query: ' . mysqli_error());
             }
         }
        }
-   }   
+   }
 }
