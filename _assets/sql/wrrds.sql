@@ -1,3 +1,5 @@
+DROP TABLE `wrrds`;
+
 CREATE TABLE `wrrds` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(20) NOT NULL,

@@ -286,7 +286,7 @@ class DB {
        $result = mysqli_query($this->conn, 'SELECT * FROM '.$table);
        $num_fields = mysqli_num_fields($result);
 
-       $return.= 'DROP TABLE '.$table.';';
+       $return.= 'DROP TABLE `'.$table.'`;';
        $row2 = mysqli_fetch_row(mysqli_query($this->conn, 'SHOW CREATE TABLE '.$table));
        $return.= "\n\n".$row2[1].";\n\n";
 
