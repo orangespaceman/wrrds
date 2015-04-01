@@ -8,12 +8,12 @@ class Moderation {
    *
    */
   private static $moderationDir = "/../txt/moderation/";
-  
-  
+
+
   /*
    *
    */
-  private function _moderate($string) {
+  static function _moderate($string) {
     $final = array();
     $moderationList = self::createModerationList();
     $words = self::_getWordSubstitutes($string);
@@ -54,16 +54,16 @@ class Moderation {
   /*
    *
    */
-  private function escapeCurseWord($word) {
-    
+  static function escapeCurseWord($word) {
+
     // replace dodgy characters
     $word = trim($word);
     $word = preg_quote($word);
     $word = str_replace("/", "\/", $word);
-    
+
     return $word;
   }
-  
+
 
 
   /*
@@ -81,12 +81,12 @@ class Moderation {
 
     return $return;
   }
-  
+
 
   /*
    *
    */
-  private function _getWordSubstitutes($string) {
+  static function _getWordSubstitutes($string) {
     $words = array();
     $words[] = $string;
 
@@ -117,26 +117,26 @@ class Moderation {
     $words[] = str_replace("-", "", $string);
 
     // drop numbers (and anything not in alphabetic)
-    $words[] = ereg_replace("[^A-Za-z]", "", $string);
+    $words[] = preg_replace("[^A-Za-z]", "", $string);
 
     // drop duplicates from the array
     $words = array_unique($words);
-    
+
     //echo "<pre>";
     //print_r($words);
     //echo "</pre>";
 
     return $words;
   }
-  
-  
+
+
   /*
    *
    */
-  private function createModerationList() {
-    
+  static function createModerationList() {
+
     $words = array();
-    
+
     // Automatically pull in every file within the 'BadWords' directory
     $currentDir = dirname(__FILE__);
     $files = scandir($currentDir.self::$moderationDir);
@@ -145,11 +145,11 @@ class Moderation {
         $words = array_merge($words, file($currentDir.self::$moderationDir.$currentFile));
       }
     }
-    
+
     //echo "<pre>";
     //print_r($words);
     //echo "</pre>";
-    
+
     return $words;
   }
 }

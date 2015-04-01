@@ -85,7 +85,7 @@ class DB {
     $result = mysqli_query($this->conn, $sql);
 
     if ($result) {
-      $return = mysqli_insert_id();
+      $return = mysqli_insert_id($this->conn);
     } else {
       $return = false;
     }
@@ -97,7 +97,7 @@ class DB {
    *
    */
   function sanitise($val) {
-    return strip_tags(mysqli_real_escape_string($val));
+    return strip_tags(mysqli_real_escape_string($this->conn, $val));
   }
 
 
